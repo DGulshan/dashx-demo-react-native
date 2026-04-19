@@ -1,0 +1,58 @@
+# Resolve react_native_pods.rb with node to allow for hoisting
+require Pod::Executable.execute_command('node', ['-p',
+  'require.resolve(
+    "react-native/scripts/react_native_pods.rb",
+    {paths: [process.argv[1]]},
+  )', __dir__]).strip
+
+platform :ios, min_ios_version_supported
+prepare_react_native_project!
+
+# Firebase's Swift pods (FirebaseCoreInternal, etc.) depend on GoogleUtilities,
+# which doesn't define modules; static-library linkage requires modular headers
+# on every pod. Enabling this globally is the cleanest fix and what
+# react-native-firebase docs recommend.
+use_modular_headers!
+
+linkage = ENV['USE_FRAMEWORKS']
+if linkage != nil
+  Pod::UI.puts "Configuring Pod with #{linkage}ally linked Frameworks".green
+  use_frameworks! :linkage => linkage.to_sym
+end
+
+target 'DashXDemoRN' do
+  config = use_native_modules!
+
+  use_react_native!(
+    :path => config[:reactNativePath],
+    # An absolute path to your application root.
+    :app_path => "#{Pod::Config.instance.installation_root}/.."
+  )
+
+  # DashX iOS SDK. Pinned to a released tag; swap to
+  #   pod 'DashX/SDK', :path => '../../../dashx-ios'
+  # for local iteration on the SDK.
+  pod 'DashX/SDK', :git => 'https://github.com/dashxhq/dashx-ios.git', :tag => '1.3.1'
+
+  # Firebase — required by the DashX React Native bridge's FCM token flow.
+  pod 'FirebaseMessaging', :modular_headers => true
+
+  post_install do |installer|
+    react_native_post_install(
+      installer,
+      config[:reactNativePath],
+      :mac_catalyst_enabled => false,
+      # :ccache_enabled => true
+    )
+  end
+end
+
+# Notification Service Extension — a separate top-level target.
+# The NSE embeds its own copy of `DashXNotificationServiceExtension.framework`
+# inside the `.appex` —
+# iOS permits app extensions to carry their own dynamic frameworks — so it
+# doesn't need to resolve anything out of the host app's Frameworks/. This
+# avoids every cross-target linking/inheritance headache.
+target 'DashXDemoRNNotificationService' do
+  pod 'DashX/NotificationServiceExtension', :git => 'https://github.com/dashxhq/dashx-ios.git', :tag => '1.3.1'
+end
