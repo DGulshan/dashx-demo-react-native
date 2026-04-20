@@ -32,7 +32,7 @@ target 'DashXDemoRN' do
   # DashX iOS SDK. Pinned to a released tag; swap to
   # pod 'DashX/SDK', :path => '../../../dashx-ios'
   # for local iteration on the SDK.
-  pod 'DashX/SDK', :git => 'https://github.com/dashxhq/dashx-ios.git', :tag => '1.3.2'
+  pod 'DashX/SDK', :git => 'https://github.com/dashxhq/dashx-ios.git', :tag => '1.4.0'
 
   # Firebase — required by the DashX React Native bridge's FCM token flow.
   pod 'FirebaseMessaging', :modular_headers => true
@@ -55,5 +55,5 @@ end
 # avoids every cross-target linking/inheritance headache.
 target 'DashXDemoRNNotificationService' do
   # pod 'DashX/NotificationServiceExtension', :path => '../../../dashx-ios'
-  pod 'DashX/NotificationServiceExtension', :git => 'https://github.com/dashxhq/dashx-ios.git', :tag => '1.3.2'
+  pod 'DashX/NotificationServiceExtension', :git => 'https://github.com/dashxhq/dashx-ios.git', :tag => '1.4.0'
 end

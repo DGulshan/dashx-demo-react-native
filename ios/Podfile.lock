@@ -1,6 +1,6 @@
 PODS:
-  - DashX/NotificationServiceExtension (1.3.2)
-  - DashX/SDK (1.3.2)
+  - DashX/NotificationServiceExtension (1.4.0)
+  - DashX/SDK (1.4.0)
   - DashXReactNative (1.3.0):
     - DashX/SDK
     - FirebaseMessaging
@@ -1936,8 +1936,8 @@ PODS:
   - Yoga (0.0.0)
 
 DEPENDENCIES:
-  - DashX/NotificationServiceExtension (from `../../../dashx-ios`)
-  - DashX/SDK (from `../../../dashx-ios`)
+  - DashX/NotificationServiceExtension (from `https://github.com/dashxhq/dashx-ios.git`, tag `1.4.0`)
+  - DashX/SDK (from `https://github.com/dashxhq/dashx-ios.git`, tag `1.4.0`)
   - "DashXReactNative (from `../node_modules/@dashx/react-native`)"
   - FBLazyVector (from `../node_modules/react-native/Libraries/FBLazyVector`)
   - FirebaseMessaging
@@ -2029,7 +2029,8 @@ SPEC REPOS:
 
 EXTERNAL SOURCES:
   DashX:
-    :path: "../../../dashx-ios"
+    :git: https://github.com/dashxhq/dashx-ios.git
+    :tag: 1.4.0
   DashXReactNative:
     :path: "../node_modules/@dashx/react-native"
   FBLazyVector:
@@ -2182,8 +2183,13 @@ EXTERNAL SOURCES:
   Yoga:
     :path: "../node_modules/react-native/ReactCommon/yoga"
 
+CHECKOUT OPTIONS:
+  DashX:
+    :git: https://github.com/dashxhq/dashx-ios.git
+    :tag: 1.4.0
+
 SPEC CHECKSUMS:
-  DashX: 7ac955d8083a35f2064c8ba174beae2a81bb833f
+  DashX: a1f14175065f222a56abfed6b0f707525f56e866
   DashXReactNative: d001f78ea5ee3355ec866a852b78ff5f7d751e3b
   FBLazyVector: e97c19a5a442429d1988f182a1940fb08df514da
   FirebaseCore: 1b39aa6e67b4b4d5771045abf9c9a57a585ff1e7
@@ -2268,6 +2274,6 @@ SPEC CHECKSUMS:
   ReactNativeDependencies: 109544980bf8516ea7771fd817f705c57ef55fec
   Yoga: c0b3f2c7e8d3e327e450223a2414ca3fa296b9a2
 
-PODFILE CHECKSUM: 4feee87643849e518f3cab9b8c0c121c24e1a625
+PODFILE CHECKSUM: 177542ed3f778a1c4aa706a95b34db3812916b23
 
 COCOAPODS: 1.16.2
