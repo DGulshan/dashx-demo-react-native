@@ -35,6 +35,13 @@ ios/.xcode.env.local
 build/
 .idea
 .gradle
+# Kotlin 2.x incremental-compile cache (errors/, sessions/). Per-dev,
+# regenerated on every compile.
+.kotlin/
+# Android NDK / CMake build cache — per-dev, 80+MB per architecture,
+# regenerated on every native build. Only present when a RN dep pulls in
+# native C++ code (e.g. react-native-safe-area-context).
+.cxx/
 local.properties
 *.iml
 *.hprof
@@ -51,6 +58,14 @@ coverage/
 .env
 .env.local
 .env.*.local
+
+# Firebase project configs — each contributor drops in their own. These
+# files aren't cryptographically sensitive (per Firebase docs, the web
+# apiKey is a public identifier), but committing them would pin the demo
+# to one maintainer's Firebase project and auto-register every fork's
+# push tokens there.
+ios/DashXDemoRN/GoogleService-Info.plist
+android/app/google-services.json
 
 # BUCK
 buck-out/

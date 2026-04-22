@@ -1,7 +1,9 @@
 buildscript {
     ext {
         buildToolsVersion = "36.0.0"
-        minSdkVersion = 24
+        // dashx-android (pulled in via @dashx/react-native) targets minSdk 26;
+        // bumping the demo to match. Aligns with Android 8.0 (Oreo) baseline.
+        minSdkVersion = 26
         compileSdkVersion = 36
         targetSdkVersion = 36
         ndkVersion = "27.1.12297006"
@@ -15,6 +17,10 @@ buildscript {
         classpath("com.android.tools.build:gradle")
         classpath("com.facebook.react:react-native-gradle-plugin")
         classpath("org.jetbrains.kotlin:kotlin-gradle-plugin")
+        // Google Services plugin — processes `android/app/google-services.json`
+        // at build time to initialize Firebase (including FCM). Applied in
+        // `android/app/build.gradle`.
+        classpath("com.google.gms:google-services:4.4.2")
     }
 }
 

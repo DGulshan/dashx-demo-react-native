@@ -69,11 +69,9 @@ export function useDemoState(): DemoStateApi {
   const subsRef = useRef<EmitterSubscription[] | null>(null);
   useEffect(() => {
     const subs = [
-      DashX.onMessageReceived((message) => {
-        // Full payload to Metro/Xcode console — `console.log` flows through
-        // RN's bridge and prints to both.
-        console.log('[DashXDemoRN] messageReceived:', JSON.stringify(message, null, 2));
-        DemoLog.log('info', `messageReceived: ${JSON.stringify(message)}`);
+      DashX.onPushNotificationReceived((message) => {
+        console.log('[DashXDemoRN] pushNotificationReceived:', JSON.stringify(message, null, 2));
+        DemoLog.log('info', `pushNotificationReceived: ${JSON.stringify(message)}`);
       }),
       DashX.onNotificationClicked(({ action, actionIdentifier }) => {
         DemoLog.log(

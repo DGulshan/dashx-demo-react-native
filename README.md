@@ -1,37 +1,85 @@
-# DashXDemoRN — React Native + DashX push exerciser (iOS)
+# DashXDemoRN — React Native + DashX push exerciser (iOS + Android)
 
 A minimal React Native app that wires every push-notification surface of the
-[`@dashx/react-native`](https://github.com/dashxhq/dashx-react-native) bridge:
+[`@dashx/react-native`](https://github.com/dashxhq/dashx-react-native) bridge
+on both platforms:
 
-- APNs token forwarding + FCM token handoff
+- APNs token forwarding + FCM token handoff (iOS)
+- FCM token registration via the auto-registered `DashXFirebaseMessagingService`
+  (Android)
 - Alert-push rendering (iOS 18.5 safe — DashX iOS 1.3.0+)
 - Rich notifications (image attachments + dynamic action buttons + delivered
   tracking when the app is killed) via a Notification Service Extension target
+  (iOS); equivalent handled in-process by the SDK on Android
 - Deep-link and action-button tap handling via the new JS `onNotificationClicked`
   event, which surfaces a resolved `NavigationAction`
 - Delivered / opened / dismissed message tracking through
-  `DashXNotificationHandler`
+  `DashXNotificationHandler` (iOS) / `DashXFirebaseMessagingService` (Android)
 
 Mirrors the SwiftUI iOS demo at `../dashx-demo-ios` one-for-one. Same button
-state machine, same Logs sheet, same button copy. Android is not wired yet.
+state machine, same Logs sheet, same button copy. Shared JS (`App.tsx`, `src/`)
+drives both platforms — the only per-platform bits are the native
+scaffolding under `ios/` and `android/`.
 
 ## Prerequisites
 
-- Xcode 15+, CocoaPods, Ruby bundler
 - Node ≥ 22.11.0, Yarn classic (or adjust `package.json` to your package
   manager)
-- A physical iOS device (FCM push requires real APNs; Simulator can still run
-  the app and exercise SDK calls but won't receive pushes)
+- **iOS**: Xcode 15+, CocoaPods, Ruby bundler
+- **Android**: JDK 17+, Android Studio (or plain `sdkmanager` + emulator)
+- A physical device for push testing (FCM requires real APNs / real FCM;
+  simulators can still exercise SDK calls but won't receive pushes)
 - `../../dashx-ios` checked out as a sibling path — the Podfile points `DashX`
-  at a local path so SDK iteration stays fast. Swap to the released `1.3.0`
-  tag (see Podfile comments) if you're integrating in production.
+  at a local path so SDK iteration stays fast. Swap to the released tag (see
+  Podfile comments) if you're integrating in production.
 
-## Bundle ID & Firebase
+## Bundle / package ID & Firebase
 
-- Bundle ID: `com.dashxdemo.rn`
-- `GoogleService-Info.plist` copied from `../../dashx-demo-rn/ios/` (same
-  Firebase project, same FCM sender as the full-feature RN demo). No user
-  action needed.
+- **iOS bundle ID**: `com.dashxdemo.rn`
+- **Android package ID**: `com.dashxdemo.rn`
+- Both targets are expected to live under the **same Firebase project**. The
+  two config files — `ios/DashXDemoRN/GoogleService-Info.plist` and
+  `android/app/google-services.json` — are **gitignored**; each contributor
+  drops in their own (see the iOS and Android setup sections below). The
+  `com.google.gms.google-services` gradle plugin is already wired in
+  `android/build.gradle` + `android/app/build.gradle`.
+
+## Android setup
+
+1. In the [Firebase console](https://console.firebase.google.com), open the
+   same project that owns the iOS credentials (see the `PROJECT_ID` in
+   `ios/DashXDemoRN/GoogleService-Info.plist`). **Add app → Android**, package
+   name `com.dashxdemo.rn`.
+2. Download the generated `google-services.json` and drop it at
+   `android/app/google-services.json`. The google-services gradle plugin
+   picks it up at build time and initializes `FirebaseApp` via the
+   auto-init content provider — no explicit `FirebaseApp.initializeApp(...)`
+   call in `MainApplication.kt` needed.
+3. `yarn install && yarn android`. The RN autolinker resolves
+   `@dashx/react-native`, which transitively pulls in
+   `com.dashx:dashx-android` and `firebase-messaging-ktx`. The
+   `DashXFirebaseMessagingService` registers itself via manifest merger
+   to handle delivered / clicked / dismissed events — no wiring needed in
+   `MainApplication`.
+
+**Notification permission** on Android 13+ is handled by the shared JS —
+`DashX.requestNotificationPermission()` prompts for `POST_NOTIFICATIONS` on
+the first `Subscribe` tap, same as iOS. On API ≤ 32 it's auto-granted.
+
+## iOS setup
+
+1. In the [Firebase console](https://console.firebase.google.com), open the
+   same project you used for Android (or create a new one). **Add app → iOS**,
+   bundle ID `com.dashxdemo.rn`.
+2. Download the generated `GoogleService-Info.plist` and drop it at
+   `ios/DashXDemoRN/GoogleService-Info.plist`. It's already wired into the
+   Xcode project's Copy Bundle Resources phase via the RN template — you
+   just need the file present for the build to succeed and for FCM to
+   initialize.
+3. Enable the **Push Notifications** and **Background modes → Remote
+   notifications** capabilities on the `DashXDemoRN` target in Xcode if
+   they aren't already, and upload your APNs auth key (`.p8`) to the
+   Firebase console under **Project Settings → Cloud Messaging**.
 
 ## Setup
 
@@ -62,7 +110,7 @@ Same state machine as the iOS demo:
 The **Logs** button opens a full-screen modal tailing every SDK call,
 permission-status response, and inbound push event. It listens on:
 
-- `onMessageReceived` — raw APNs userInfo for delivered pushes
+- `onPushNotificationReceived` — raw APNs userInfo for delivered pushes
 - `onNotificationClicked` — resolved `NavigationAction` + `actionIdentifier`
   when the user taps a notification or action button
 - `onLinkReceived` — URL passed to `DashX.linkHandler` / `processURL`
@@ -90,8 +138,6 @@ iOS apps, and requires no RN-side (JS) changes.
 
 ## What's _not_ wired
 
-- **Android** — the `android/` directory is the stock RN scaffold with no
-  DashX wiring.
 - **Production error surfacing** — the RN bridge's `configure`, `identify`,
   `subscribe`, `unsubscribe` are currently fire-and-forget (no Promise
   returns). The demo flips flags optimistically on call and relies on the
@@ -118,6 +164,18 @@ DashXDemoRN/
 │   │   ├── NotificationService.swift  final class : DashXNotificationService {}
 │   │   └── Info.plist               NSExtension manifest + DASHX_* keys
 │   └── Podfile                      pod 'DashX/SDK' + pod 'DashX/NotificationServiceExtension' (NSE target)
+├── android/
+│   ├── build.gradle                  google-services classpath
+│   └── app/
+│       ├── build.gradle              apply com.google.gms.google-services, namespace com.dashxdemo.rn
+│       ├── google-services.json      ← YOU provide this (see Android setup)
+│       └── src/main/
+│           ├── AndroidManifest.xml   POST_NOTIFICATIONS permission
+│           └── java/com/dashxdemo/rn/
+│               ├── MainActivity.kt
+│               ├── MainApplication.kt   registers FCMTokenBridgePackage
+│               ├── FCMTokenBridge.kt    deleteToken() → FirebaseMessaging
+│               └── FCMTokenBridgePackage.kt
 └── package.json                     '@dashx/react-native': 'link:../../dashx-react-native'
 ```
 
