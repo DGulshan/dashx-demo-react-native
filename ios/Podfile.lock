@@ -1,8 +1,8 @@
 PODS:
-  - DashX/NotificationServiceExtension (1.4.0)
-  - DashX/SDK (1.4.0)
-  - DashXReactNative (1.3.0):
-    - DashX/SDK
+  - DashX/NotificationServiceExtension (1.5.1)
+  - DashX/SDK (1.5.1)
+  - DashXReactNative (1.4.0):
+    - DashX/SDK (>= 1.5.1)
     - FirebaseMessaging
     - hermes-engine
     - RCTRequired
@@ -1936,8 +1936,8 @@ PODS:
   - Yoga (0.0.0)
 
 DEPENDENCIES:
-  - DashX/NotificationServiceExtension (from `https://github.com/dashxhq/dashx-ios.git`, tag `1.4.0`)
-  - DashX/SDK (from `https://github.com/dashxhq/dashx-ios.git`, tag `1.4.0`)
+  - DashX/NotificationServiceExtension (from `https://github.com/dashxhq/dashx-ios.git`, tag `1.5.1`)
+  - DashX/SDK (from `https://github.com/dashxhq/dashx-ios.git`, tag `1.5.1`)
   - "DashXReactNative (from `../node_modules/@dashx/react-native`)"
   - FBLazyVector (from `../node_modules/react-native/Libraries/FBLazyVector`)
   - FirebaseMessaging
@@ -2030,7 +2030,7 @@ SPEC REPOS:
 EXTERNAL SOURCES:
   DashX:
     :git: https://github.com/dashxhq/dashx-ios.git
-    :tag: 1.4.0
+    :tag: 1.5.1
   DashXReactNative:
     :path: "../node_modules/@dashx/react-native"
   FBLazyVector:
@@ -2186,11 +2186,11 @@ EXTERNAL SOURCES:
 CHECKOUT OPTIONS:
   DashX:
     :git: https://github.com/dashxhq/dashx-ios.git
-    :tag: 1.4.0
+    :tag: 1.5.1
 
 SPEC CHECKSUMS:
-  DashX: a1f14175065f222a56abfed6b0f707525f56e866
-  DashXReactNative: d001f78ea5ee3355ec866a852b78ff5f7d751e3b
+  DashX: c626a133ee29d6858b6b2b21e0fcec1719bcfefb
+  DashXReactNative: 606f024d33595e5d0ad3cb6805aa2a2acd006477
   FBLazyVector: e97c19a5a442429d1988f182a1940fb08df514da
   FirebaseCore: 1b39aa6e67b4b4d5771045abf9c9a57a585ff1e7
   FirebaseCoreInternal: 26601b1134d192ef73e80c0c0110fb96477db687
@@ -2274,6 +2274,6 @@ SPEC CHECKSUMS:
   ReactNativeDependencies: 109544980bf8516ea7771fd817f705c57ef55fec
   Yoga: c0b3f2c7e8d3e327e450223a2414ca3fa296b9a2
 
-PODFILE CHECKSUM: 177542ed3f778a1c4aa706a95b34db3812916b23
+PODFILE CHECKSUM: eff98df04f0d2060223a2d2478ca10b5ce771ab2
 
 COCOAPODS: 1.16.2
